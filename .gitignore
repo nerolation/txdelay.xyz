@@ -1,6 +1,8 @@
 __pycache__/
 *.pyc
-data/
 .env
 *.json.tmp
 .pyxatu_config.json
+analyze.py
+investigate.py
+investigate_sample.py

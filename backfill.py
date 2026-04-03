@@ -18,11 +18,11 @@ import time as _time
 from datetime import datetime, timedelta, timezone
 
 import pandas as pd
-import pyxatu
 
 from compute import (
     build_lookups,
     compute_viable_times,
+    create_xatu,
     parse_blocks,
     parse_transactions,
     query_mempool_batched,
@@ -154,7 +154,7 @@ def main():
     parser.add_argument("--days", type=int, default=180, help="Lookback in days")
     args = parser.parse_args()
 
-    xatu = pyxatu.PyXatu(use_env_variables=True)
+    xatu = create_xatu()
     history = load_history()
     existing = {d["timestamp"] for d in history}
 

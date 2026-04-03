@@ -3,12 +3,12 @@ import os
 import time
 from datetime import datetime, timezone
 
-import pyxatu
 from flask import Flask, Response, jsonify, render_template, request
 
 from compute import (
     build_lookups,
     compute_viable_times,
+    create_xatu,
     parse_blocks,
     parse_transactions,
     query_mempool_batched,
@@ -31,7 +31,7 @@ _history_cache = {"data": None, "timestamp": 0, "mtime": 0}
 def get_xatu():
     global _xatu
     if _xatu is None:
-        _xatu = pyxatu.PyXatu(use_env_variables=True)
+        _xatu = create_xatu()
     return _xatu
 
 

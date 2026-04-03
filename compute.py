@@ -1,8 +1,16 @@
 """Shared computation logic for fee-viable inclusion times."""
 
+import os
 from bisect import bisect_left, bisect_right
 
 import pandas as pd
+import pyxatu
+
+
+def create_xatu():
+    """Create PyXatu client, using env variables if set, else config file."""
+    use_env = bool(os.environ.get("CLICKHOUSE_URL"))
+    return pyxatu.PyXatu(use_env_variables=use_env)
 
 BEACON_GENESIS_TIME = 1606824023
 MEMPOOL_BATCH_SIZE = 200  # Xatu rejects queries >~30KB; 200 hashes ≈ 14KB
