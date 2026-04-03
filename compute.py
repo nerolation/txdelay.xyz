@@ -9,7 +9,8 @@ import pyxatu
 
 def create_xatu():
     """Create PyXatu client, using env variables if set, else config file."""
-    if os.environ.get("CLICKHOUSE_URL"):
+    config_exists = os.path.exists(os.path.expanduser("~/.pyxatu_config.json"))
+    if not config_exists:
         return pyxatu.PyXatu(use_env_variables=True)
     return pyxatu.PyXatu()
 
