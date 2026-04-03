@@ -11,6 +11,7 @@ permissions:
 jobs:
   backfill:
     runs-on: ubuntu-latest
+    environment: CLICKHOUSE_USER
     steps:
       - uses: actions/checkout@v4
 
