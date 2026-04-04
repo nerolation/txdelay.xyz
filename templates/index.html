@@ -11,295 +11,94 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --accent: #2563eb;
-            --accent-dim: #1d4ed8;
-            --ok: #16a34a;
-            --bg: #ffffff;
-            --bg-surface: #f8fafc;
-            --border: #e2e8f0;
-            --border-light: #f1f5f9;
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --text-tertiary: #94a3b8;
+            --accent: #2563eb; --accent-dim: #1d4ed8; --ok: #16a34a;
+            --bg: #ffffff; --bg-surface: #f8fafc;
+            --border: #e2e8f0; --border-light: #f1f5f9;
+            --text-primary: #0f172a; --text-secondary: #475569; --text-tertiary: #94a3b8;
             --text-link: #2563eb;
-            --tooltip-bg: #1e293b;
-            --tooltip-text: #f1f5f9;
+            --tooltip-bg: #1e293b; --tooltip-text: #f1f5f9;
             color-scheme: light dark;
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
-                --accent: #60a5fa;
-                --accent-dim: #3b82f6;
-                --ok: #4ade80;
-                --bg: #0f172a;
-                --bg-surface: #1e293b;
-                --border: #334155;
-                --border-light: #1e293b;
-                --text-primary: #f1f5f9;
-                --text-secondary: #94a3b8;
-                --text-tertiary: #64748b;
-                --text-link: #60a5fa;
-                --tooltip-bg: #f1f5f9;
-                --tooltip-text: #1e293b;
+                --accent: #60a5fa; --accent-dim: #3b82f6; --ok: #4ade80;
+                --bg: #0f172a; --bg-surface: #1e293b;
+                --border: #334155; --border-light: #1e293b;
+                --text-primary: #f1f5f9; --text-secondary: #94a3b8; --text-tertiary: #64748b;
+                --text-link: #60a5fa; --tooltip-bg: #f1f5f9; --tooltip-text: #1e293b;
             }
         }
 
         body {
-            background: var(--bg);
-            color: var(--text-secondary);
+            background: var(--bg); color: var(--text-secondary);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            min-height: 100dvh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100dvh; display: flex; align-items: center; justify-content: center;
             transition: background 0.3s, color 0.3s;
         }
+        .wrap { max-width: 600px; width: 100%; padding: 2.5rem 1.5rem; }
 
-        .wrap {
-            max-width: 600px;
-            width: 100%;
-            padding: 2.5rem 1.5rem;
-        }
-
-        /* ── header ── */
         .head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border-light);
-            margin-bottom: 2.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            padding-bottom: 1.2rem; border-bottom: 1px solid var(--border-light); margin-bottom: 2.5rem;
         }
-        .head-left {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .head-diamond {
-            color: var(--accent);
-            font-size: 0.9rem;
-        }
-        .head-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-        .head-right {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        .live {
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
-            font-size: 0.65rem;
-            font-weight: 600;
-            color: var(--text-tertiary);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-        .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--ok);
-            box-shadow: 0 0 6px var(--ok);
-            animation: pulse 2.5s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.25; }
-        }
+        .head-left { display: flex; align-items: center; gap: 0.5rem; }
+        .head-diamond { color: var(--accent); font-size: 0.9rem; }
+        .head-title { font-size: 0.8rem; font-weight: 600; color: var(--text-primary); letter-spacing: 0.08em; text-transform: uppercase; }
+        .head-right { display: flex; align-items: center; gap: 0.6rem; }
+        .live { display: flex; align-items: center; gap: 0.35rem; font-size: 0.65rem; font-weight: 600; color: var(--text-tertiary); letter-spacing: 0.1em; text-transform: uppercase; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 6px var(--ok); animation: pulse 2.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
         .icon-btn {
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-tertiary);
-            font-family: inherit;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: color 0.2s, border-color 0.2s;
-            text-decoration: none;
+            background: none; border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-tertiary); font-family: inherit; width: 30px; height: 30px;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+            transition: color 0.2s, border-color 0.2s; text-decoration: none;
         }
-        .icon-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--text-secondary);
-        }
-        .icon-btn svg {
-            width: 15px;
-            height: 15px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
+        .icon-btn:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+        .icon-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-        /* ── hero number ── */
-        .hero {
-            text-align: center;
-            padding: 2rem 0 1.5rem;
-        }
-        .num {
-            font-size: 4.5rem;
-            font-weight: 700;
-            color: var(--accent);
-            line-height: 1;
-            letter-spacing: -0.02em;
-        }
-        .unit {
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: var(--accent-dim);
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            margin-top: 0.5rem;
-        }
-        .sub {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            margin-top: 1rem;
-        }
+        .hero { text-align: center; padding: 2rem 0 1.5rem; }
+        .num { font-size: 4.5rem; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -0.02em; transition: opacity 0.3s; }
+        .unit { font-size: 0.85rem; font-weight: 500; color: var(--accent-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.5rem; }
+        .sub { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 1rem; }
 
-        /* ── stat grid ── */
         .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border-light);
-            border: 1px solid var(--border-light);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 2rem;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+            background: var(--border-light); border: 1px solid var(--border-light);
+            border-radius: 10px; overflow: hidden; margin-bottom: 2rem;
         }
-        .cell {
-            background: var(--bg-surface);
-            padding: 1rem 0.5rem;
-            text-align: center;
-            position: relative;
-            cursor: default;
-            transition: background 0.15s;
-        }
+        .cell { background: var(--bg-surface); padding: 1rem 0.5rem; text-align: center; cursor: default; transition: background 0.15s; }
         .cell:hover { background: var(--bg); }
-        .cell-label {
-            font-size: 0.65rem;
-            color: var(--text-tertiary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            font-weight: 500;
-            margin-bottom: 0.4rem;
-        }
-        .cell-val {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        .cell-val small {
-            font-size: 0.6rem;
-            font-weight: 500;
-            color: var(--text-tertiary);
-        }
+        .cell-label { font-size: 0.65rem; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 500; margin-bottom: 0.4rem; }
+        .cell-val { font-size: 1.25rem; font-weight: 700; color: var(--text-primary); transition: opacity 0.3s; }
+        .cell-val small { font-size: 0.6rem; font-weight: 500; color: var(--text-tertiary); }
 
-        /* ── tooltip ── */
         .tip { position: relative; }
         .tip::after {
-            content: attr(data-tip);
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--tooltip-bg);
-            color: var(--tooltip-text);
-            font-size: 0.7rem;
-            font-weight: 400;
-            line-height: 1.5;
-            letter-spacing: 0;
-            text-transform: none;
-            padding: 0.6rem 0.75rem;
-            border-radius: 8px;
-            white-space: normal;
-            width: max-content;
-            max-width: 260px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.15s;
-            z-index: 200;
-            text-align: left;
+            content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%;
+            transform: translateX(-50%); background: var(--tooltip-bg); color: var(--tooltip-text);
+            font-size: 0.7rem; font-weight: 400; line-height: 1.5; letter-spacing: 0; text-transform: none;
+            padding: 0.6rem 0.75rem; border-radius: 8px; white-space: normal; width: max-content;
+            max-width: 260px; opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 200; text-align: left;
         }
         .tip::before {
-            content: '';
-            position: absolute;
-            bottom: calc(100% + 3px);
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: var(--tooltip-bg);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.15s;
-            z-index: 200;
+            content: ''; position: absolute; bottom: calc(100% + 3px); left: 50%;
+            transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--tooltip-bg);
+            opacity: 0; pointer-events: none; transition: opacity 0.15s; z-index: 200;
         }
-        .tip:hover::after,
-        .tip:hover::before { opacity: 1; }
+        .tip:hover::after, .tip:hover::before { opacity: 1; }
 
-        /* ── note ── */
-        .note {
-            border-left: 2px solid var(--border);
-            padding: 0 0 0 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            line-height: 1.8;
-        }
-        .note em {
-            font-style: normal;
-            color: var(--text-secondary);
-            background: var(--bg-surface);
-            padding: 0.1rem 0.35rem;
-            border-radius: 3px;
-            font-size: 0.65rem;
-        }
-
-        /* ── footer ── */
-        .foot {
-            font-size: 0.7rem;
-            color: var(--text-tertiary);
-            text-align: center;
-            line-height: 1.9;
-        }
-        .foot a {
-            color: var(--text-link);
-            text-decoration: none;
-        }
+        .note { border-left: 2px solid var(--border); padding: 0 0 0 1rem; margin-bottom: 2rem; font-size: 0.75rem; color: var(--text-tertiary); line-height: 1.8; }
+        .note em { font-style: normal; color: var(--text-secondary); background: var(--bg-surface); padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.65rem; }
+        .foot { font-size: 0.7rem; color: var(--text-tertiary); text-align: center; line-height: 1.9; }
+        .foot a { color: var(--text-link); text-decoration: none; }
         .foot a:hover { opacity: 0.75; }
 
-        /* ── loading ── */
-        .loading {
-            text-align: center;
-            padding: 5rem 0;
-            color: var(--text-tertiary);
-            font-size: 0.85rem;
-        }
-        .cursor {
-            display: inline-block;
-            width: 8px;
-            height: 1.1em;
-            background: var(--accent);
-            margin-left: 2px;
-            vertical-align: text-bottom;
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
+        /* loading shimmer */
+        .placeholder { color: var(--text-tertiary); }
+        @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.3} }
+        .shimmer { animation: shimmer 1.8s ease-in-out infinite; }
 
-        /* ── responsive ── */
         @media (max-width: 520px) {
             .wrap { padding: 1.5rem 1rem; }
             .num { font-size: 3.5rem; }
@@ -329,29 +128,34 @@
             </div>
         </header>
 
-        {% if data %}
         <div class="hero tip" data-tip="Median time a transaction waits in the mempool while its fee is high enough to be included. Only counts MEV-boost blocks with sufficient builder revenue.">
-            <div class="num" id="main-value">{{ data.median_viable_time }}</div>
+            <div class="num {{ '' if data else 'shimmer placeholder' }}" id="main-value">{{ data.median_viable_time if data else '...' }}</div>
             <div class="unit">seconds</div>
-            <div class="sub">median fee-viable inclusion time &middot; {{ "{:,}".format(data.num_txs) }}&nbsp;txs &middot; {{ data.num_blocks }}&nbsp;blocks</div>
+            <div class="sub" id="sub-text">
+                {% if data %}
+                median fee-viable inclusion time &middot; {{ "{:,}".format(data.num_txs) }}&nbsp;txs &middot; {{ data.num_blocks }}&nbsp;blocks
+                {% else %}
+                querying latest blocks from xatu
+                {% endif %}
+            </div>
         </div>
 
         <div class="grid">
             <div class="cell tip" data-tip="Average (mean) fee-viable inclusion time. Higher than the median because a few slow transactions pull it up.">
                 <div class="cell-label">Mean</div>
-                <div class="cell-val">{{ data.mean_viable_time }}<small>s</small></div>
+                <div class="cell-val {{ '' if data else 'shimmer placeholder' }}" id="val-mean">{% if data %}{{ data.mean_viable_time }}<small>s</small>{% else %}&mdash;{% endif %}</div>
             </div>
             <div class="cell tip" data-tip="90th percentile: 90% of transactions are included faster than this.">
                 <div class="cell-label">p90</div>
-                <div class="cell-val">{{ data.p90_viable_time }}<small>s</small></div>
+                <div class="cell-val {{ '' if data else 'shimmer placeholder' }}" id="val-p90">{% if data %}{{ data.p90_viable_time }}<small>s</small>{% else %}&mdash;{% endif %}</div>
             </div>
             <div class="cell tip" data-tip="99th percentile: only 1% of transactions wait longer than this.">
                 <div class="cell-label">p99</div>
-                <div class="cell-val">{{ data.p99_viable_time }}<small>s</small></div>
+                <div class="cell-val {{ '' if data else 'shimmer placeholder' }}" id="val-p99">{% if data %}{{ data.p99_viable_time }}<small>s</small>{% else %}&mdash;{% endif %}</div>
             </div>
             <div class="cell tip" data-tip="Current base fee per gas. Transactions must offer at least this much to be eligible for inclusion.">
                 <div class="cell-label">Basefee</div>
-                <div class="cell-val">{{ data.latest_basefee_gwei }}<small> gwei</small></div>
+                <div class="cell-val {{ '' if data else 'shimmer placeholder' }}" id="val-basefee">{% if data %}{{ data.latest_basefee_gwei }}<small> gwei</small>{% else %}&mdash;{% endif %}</div>
             </div>
         </div>
 
@@ -360,18 +164,14 @@
             Excludes blob txs, non-MEV-boost blocks, missed slots, and nonce-dependent transactions.
         </div>
 
-        <footer class="foot">
+        <footer class="foot" id="foot">
+            {% if data %}
             {{ data.timestamp }} &middot; refreshes 60s<br>
+            {% endif %}
             data &middot; <a href="https://xatu.ethpandaops.io">xatu</a>
             &nbsp;&middot;&nbsp; <a href="https://github.com/nerolation/pyxatu">pyxatu</a><br>
-            made with ❤️ by <a href="https://x.com/nero_eth">Toni Wahrstätter</a>
+            made with &#10084;&#65039; by <a href="https://x.com/nero_eth">Toni Wahrstätter</a>
         </footer>
-
-        {% else %}
-        <div class="loading">
-            loading<span class="cursor"></span>
-        </div>
-        {% endif %}
     </div>
 
     <script>
@@ -383,19 +183,16 @@
                 '--bg':'#ffffff','--bg-surface':'#f8fafc',
                 '--border':'#e2e8f0','--border-light':'#f1f5f9',
                 '--text-primary':'#0f172a','--text-secondary':'#475569','--text-tertiary':'#94a3b8',
-                '--text-link':'#2563eb',
-                '--tooltip-bg':'#1e293b','--tooltip-text':'#f1f5f9',
+                '--text-link':'#2563eb','--tooltip-bg':'#1e293b','--tooltip-text':'#f1f5f9',
             },
             dark: {
                 '--accent':'#60a5fa','--accent-dim':'#3b82f6','--ok':'#4ade80',
                 '--bg':'#0f172a','--bg-surface':'#1e293b',
                 '--border':'#334155','--border-light':'#1e293b',
                 '--text-primary':'#f1f5f9','--text-secondary':'#94a3b8','--text-tertiary':'#64748b',
-                '--text-link':'#60a5fa',
-                '--tooltip-bg':'#f1f5f9','--tooltip-text':'#1e293b',
+                '--text-link':'#60a5fa','--tooltip-bg':'#f1f5f9','--tooltip-text':'#1e293b',
             }
         };
-
         function getTheme() {
             return localStorage.getItem('theme') ||
                 (matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light');
@@ -414,14 +211,46 @@
             applyTheme(current);
         });
 
-        // auto-refresh
+        // populate all values from API response
+        function populate(d) {
+            const el = id => document.getElementById(id);
+            el('main-value').textContent = d.median_viable_time;
+            el('main-value').classList.remove('shimmer', 'placeholder');
+            el('val-mean').innerHTML = d.mean_viable_time + '<small>s</small>';
+            el('val-p90').innerHTML = d.p90_viable_time + '<small>s</small>';
+            el('val-p99').innerHTML = d.p99_viable_time + '<small>s</small>';
+            el('val-basefee').innerHTML = d.latest_basefee_gwei + '<small> gwei</small>';
+            ['val-mean','val-p90','val-p99','val-basefee'].forEach(id => {
+                el(id).classList.remove('shimmer', 'placeholder');
+            });
+            el('sub-text').innerHTML =
+                'median fee-viable inclusion time &middot; ' +
+                Number(d.num_txs).toLocaleString() + '&nbsp;txs &middot; ' +
+                d.num_blocks + '&nbsp;blocks';
+        }
+
+        // if page loaded without data, poll until ready
+        const needsLoad = document.getElementById('main-value').textContent.trim() === '...';
+        if (needsLoad) {
+            (async function poll() {
+                try {
+                    const r = await fetch('/api/data');
+                    if (r.ok) {
+                        const d = await r.json();
+                        if (!d.error) { populate(d); return; }
+                    }
+                } catch {}
+                setTimeout(poll, 3000);
+            })();
+        }
+
+        // regular refresh every 60s
         setInterval(async () => {
             try {
                 const r = await fetch('/api/data');
                 if (!r.ok) return;
                 const d = await r.json();
-                const el = document.getElementById('main-value');
-                if (el) el.textContent = d.median_viable_time;
+                if (!d.error) populate(d);
             } catch {}
         }, 60000);
     </script>

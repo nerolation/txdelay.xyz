@@ -160,7 +160,8 @@ def get_history():
 
 @app.route("/")
 def index():
-    data = get_cached_data()
+    # Never block page render — show cached data or loading state
+    data = _cache["data"]
     return render_template("index.html", data=data)
 
 
