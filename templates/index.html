@@ -70,7 +70,8 @@
         .icon-btn:hover { color: var(--text-primary); border-color: var(--text-secondary); }
         .icon-btn svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-        .hero { text-align: center; padding: 2rem 0 1.5rem; }
+        .question { text-align: center; font-size: 1.1rem; font-weight: 600; color: var(--text-primary); line-height: 1.5; }
+        .hero { text-align: center; padding: 1.2rem 0 1.5rem; }
         .num { font-size: 4.5rem; font-weight: 700; color: var(--accent); line-height: 1; letter-spacing: -0.02em; transition: opacity 0.3s; }
         .unit { font-size: 0.85rem; font-weight: 500; color: var(--accent-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-top: 0.5rem; }
         .sub { font-size: 0.75rem; color: var(--text-tertiary); margin-top: 1rem; }
@@ -140,6 +141,8 @@
                 </button>
             </div>
         </header>
+
+        <div class="question">How long does an Ethereum transaction take to be included?</div>
 
         <div class="hero tip" data-tip="Median time a transaction waits in the mempool while its fee is high enough to be included. Only counts MEV-boost blocks with sufficient builder revenue.">
             <div class="num {{ '' if data else 'shimmer placeholder' }}" id="main-value">{{ data.median_viable_time if data else '...' }}</div>
