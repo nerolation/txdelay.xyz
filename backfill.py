@@ -26,7 +26,7 @@ from compute import (
     parse_blocks,
     parse_transactions,
     query_mempool_batched,
-    query_mev_slots,
+    # query_mev_slots,  # disabled: count all blocks
     summarize,
 )
 
@@ -114,10 +114,9 @@ def compute_sample(xatu, target_time):
         return None
     txs_sample = txs.sample(n=n_sample, random_state=42)
 
-    # MEV-boost slots
     earliest = sample_blocks["slot_start_date_time"].min()
     latest = sample_blocks["slot_start_date_time"].max()
-    mev_slots = query_mev_slots(xatu, earliest, latest)
+    # mev_slots = query_mev_slots(xatu, earliest, latest)  # disabled
 
     # Mempool first-seen times
     mempool_df = query_mempool_batched(
@@ -135,7 +134,7 @@ def compute_sample(xatu, target_time):
 
     viable_times = compute_viable_times(
         public_txs, basefee_by_slot, slot_times, block_to_slot, sorted_slots,
-        gas_used_by_slot, gas_limit_by_slot, mev_slots,
+        gas_used_by_slot, gas_limit_by_slot,
     )
     stats = summarize(viable_times)
     if stats is None:

@@ -7,7 +7,7 @@
     <meta name="description" content="Live fee-viable transaction inclusion time on Ethereum. Median, p90, p99 metrics updated every 60 seconds.">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Ethereum Transaction Inclusion Time">
-    <meta property="og:description" content="Live fee-viable transaction inclusion time on Ethereum. Excludes blob txs, non-MEV-boost blocks, and dust-priority transactions.">
+    <meta property="og:description" content="Live fee-viable transaction inclusion time on Ethereum. Excludes blob txs, full blocks, and dust-priority transactions.">
     <meta property="og:image" content="https://txdelay.xyz/static/ogimage.png">
     <meta property="og:url" content="https://txdelay.xyz">
     <meta property="og:site_name" content="txdelay.xyz">
@@ -177,7 +177,7 @@
 
         <div class="note">
             Only counts time when <em>max_fee_per_gas &ge; basefee</em> and <em>priority fees &ge; $0.01</em>.
-            Excludes blob txs, non-MEV-boost blocks, missed slots, and nonce-dependent transactions.
+            Excludes blob txs and nonce-dependent transactions.
         </div>
 
         <footer class="foot" id="foot">

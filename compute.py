@@ -156,15 +156,14 @@ def compute_viable_times(public_txs, basefee_by_slot, slot_times, block_to_slot,
     """Compute fee-viable inclusion time for each public transaction.
 
     A slot is viable if:
-      1. Block was built via MEV-boost (builder had full mempool visibility)
-      2. fee_cap >= basefee AND builder revenue >= $0.01
-      3. The block had enough remaining gas for the transaction
+      1. fee_cap >= basefee AND priority revenue >= $0.01
+      2. The block had enough remaining gas for the transaction
 
     Returns list of viable times in seconds (only txs with viable_time > 0).
     """
     viable_times = []
     check_gas = bool(gas_used_by_slot and gas_limit_by_slot)
-    check_mev = mev_slots is not None
+    # check_mev = mev_slots is not None  # disabled: count all blocks
 
     for _, tx in public_txs.iterrows():
         first_seen = tx["first_seen_time"]
@@ -187,28 +186,31 @@ def compute_viable_times(public_txs, basefee_by_slot, slot_times, block_to_slot,
         hi = bisect_right(sorted_slots, inclusion_slot)
         slots_in_range = sorted_slots[lo:hi]
 
-        # Total possible slots (including missed ones with no block)
-        total_slots = max(1, inclusion_slot - first_seen_slot + 1)
+        # NOTE: using len(slots_in_range) as denominator — missed/reorged slots
+        # (no block produced) are not in sorted_slots, so their 12s contributes
+        # to the delay. To exclude missed slots, use:
+        #   total_slots = max(1, inclusion_slot - first_seen_slot + 1)
+        # To filter non-MEV-boost blocks, uncomment the check_mev lines.
 
         if not slots_in_range:
             viable_times.append(raw_time)
         else:
             viable_count = 0
             for s in slots_in_range:
-                if check_mev and s not in mev_slots:
-                    continue  # solo validator — limited mempool
+                # if check_mev and s not in mev_slots:
+                #     continue  # solo validator — limited mempool
                 bf = basefee_by_slot[s]
                 eff_prio = min(priority_cap, fee_cap - bf) if fee_cap >= bf else 0
                 if fee_cap >= bf and eff_prio * tx_gas >= MIN_REVENUE_WEI:
-                    if check_gas:
-                        remaining = (
-                            gas_limit_by_slot.get(s, 30_000_000)
-                            - gas_used_by_slot.get(s, 0)
-                        )
-                        if remaining < tx_gas:
-                            continue  # block too full for this tx
+                    # if check_gas:
+                    #     remaining = (
+                    #         gas_limit_by_slot.get(s, 30_000_000)
+                    #         - gas_used_by_slot.get(s, 0)
+                    #     )
+                    #     if remaining < tx_gas:
+                    #         continue  # block too full for this tx
                     viable_count += 1
-            viable_time = raw_time * (viable_count / total_slots)
+            viable_time = raw_time * (viable_count / len(slots_in_range))
             if viable_time > 0:
                 viable_times.append(viable_time)
 
