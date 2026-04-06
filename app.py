@@ -11,6 +11,7 @@ from compute import (
     create_xatu,
     parse_blocks,
     parse_transactions,
+    query_block_seen_times,
     query_mempool_batched,
     # query_mev_slots,  # disabled: count all blocks
     summarize,
@@ -90,6 +91,7 @@ def compute_inclusion_data():
     earliest = analysis_blocks["slot_start_date_time"].min()
     latest = analysis_blocks["slot_start_date_time"].max()
     # mev_slots = query_mev_slots(xatu, earliest, latest)  # disabled
+    block_seen_times = query_block_seen_times(xatu, earliest, latest)
 
     mempool_df = query_mempool_batched(
         xatu, txs_sample["transaction_hash"].tolist(), earliest, latest
@@ -107,6 +109,7 @@ def compute_inclusion_data():
     viable_times = compute_viable_times(
         public_txs, basefee_by_slot, slot_times, block_to_slot, sorted_slots,
         gas_used_by_slot, gas_limit_by_slot,
+        block_seen_times=block_seen_times,
     )
     stats = summarize(viable_times)
     if stats is None:

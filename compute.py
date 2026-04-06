@@ -119,6 +119,38 @@ def query_mev_slots(xatu, earliest_time, latest_time):
     return set(int(s) for s in r["slot"])
 
 
+def query_block_seen_times(xatu, earliest_time, latest_time):
+    """Query when each block was first seen on the network (p5 of sentry reports).
+
+    Returns dict of {slot: datetime} with the actual block propagation time,
+    or empty dict if data is unavailable.
+    """
+    from datetime import timedelta
+    r = xatu.execute_query(
+        f"""
+        SELECT slot,
+               quantile(0.05)(propagation_slot_start_diff) AS p5_ms
+        FROM default.beacon_api_eth_v1_events_block
+        WHERE meta_network_name = 'mainnet'
+          AND slot_start_date_time >= toDateTime64('{earliest_time}', 3)
+          AND slot_start_date_time <= toDateTime64('{latest_time}', 3)
+        GROUP BY slot
+        """,
+        columns="slot,p5_ms",
+    )
+    if r is None or r.empty:
+        return {}
+    # Convert slot + p5_ms offset to absolute datetime
+    # We need slot_start_date_time; compute from slot number
+    result = {}
+    for _, row in r.iterrows():
+        slot = int(row["slot"])
+        p5_ms = float(row["p5_ms"])
+        slot_start = pd.Timestamp(BEACON_GENESIS_TIME + slot * 12, unit="s")
+        result[slot] = slot_start + timedelta(milliseconds=p5_ms)
+    return result
+
+
 def query_mempool_batched(xatu, tx_hashes, earliest_time, latest_time):
     """Query mempool first-seen times in batches of MEMPOOL_BATCH_SIZE."""
     results = []
@@ -152,7 +184,8 @@ def query_mempool_batched(xatu, tx_hashes, earliest_time, latest_time):
 
 def compute_viable_times(public_txs, basefee_by_slot, slot_times, block_to_slot,
                          sorted_slots, gas_used_by_slot=None,
-                         gas_limit_by_slot=None, mev_slots=None):
+                         gas_limit_by_slot=None, mev_slots=None,
+                         block_seen_times=None):
     """Compute fee-viable inclusion time for each public transaction.
 
     A slot is viable if:
@@ -176,7 +209,11 @@ def compute_viable_times(public_txs, basefee_by_slot, slot_times, block_to_slot,
         if inclusion_slot is None:
             continue
 
-        inclusion_time = slot_times[inclusion_slot]
+        # Use actual block propagation time if available, else slot start
+        if block_seen_times and inclusion_slot in block_seen_times:
+            inclusion_time = block_seen_times[inclusion_slot]
+        else:
+            inclusion_time = slot_times[inclusion_slot]
         raw_time = (inclusion_time - first_seen).total_seconds()
         if raw_time <= 0:
             continue
