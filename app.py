@@ -3,7 +3,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-from flask import Flask, Response, jsonify, render_template, request
+from flask import Flask, Response, jsonify, redirect, render_template, request
 
 from compute import (
     build_lookups,
@@ -18,6 +18,14 @@ from compute import (
 )
 
 app = Flask(__name__)
+
+
+@app.before_request
+def force_https():
+    """Redirect HTTP to HTTPS on Heroku (behind reverse proxy)."""
+    if request.headers.get("X-Forwarded-Proto") == "http":
+        return redirect(request.url.replace("http://", "https://", 1), code=301)
+
 
 CACHE_TTL = 60  # seconds
 HISTORY_CACHE_TTL = 300  # 5 min — history.json rarely changes
