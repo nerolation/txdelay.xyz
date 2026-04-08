@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 import pandas as pd
 
 from compute import (
+    BEACON_GENESIS_TIME,
     build_lookups,
     compute_viable_times,
     create_xatu,
@@ -143,11 +144,23 @@ def compute_sample(xatu, target_time):
     if stats is None:
         return None
 
+    # Mempool timing histogram (second within slot)
+    timing = [0] * 12
+    for _, tx in merged.iterrows():
+        if tx.get("first_seen_time") is None or str(tx.get("first_seen_time")) == "NaT":
+            continue
+        ts = tx["first_seen_time"].timestamp()
+        slot_start = BEACON_GENESIS_TIME + int((ts - BEACON_GENESIS_TIME) // 12) * 12
+        sec = int(ts - slot_start)
+        if 0 <= sec < 12:
+            timing[sec] += 1
+
     stats["timestamp"] = target_time.strftime("%Y-%m-%dT%H:%M:%S")
     stats["basefee_gwei"] = round(
         float(sample_blocks["base_fee_per_gas"].median()) / 1e9, 2
     )
     stats["slot"] = int(sample_blocks["slot"].iloc[len(sample_blocks) // 2])
+    stats["mempool_timing"] = timing
     return stats
 
 

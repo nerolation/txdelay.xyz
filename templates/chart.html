@@ -174,13 +174,33 @@
             </div>
         </div>
 
+        <div style="font-size:0.7rem; color:var(--text-tertiary); margin-bottom:0.5rem">
+            Sampled ~20 blocks every 6 hours
+        </div>
+
         <div class="empty" id="empty" style="display:none">
             No historical data yet. Run <code>python3 backfill.py</code> to populate.<br>
             <a href="/">Back to live dashboard</a>
         </div>
 
-        <footer class="foot">
-            Sampled ~20 blocks every 6 hours &middot;
+        <div style="margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--border-light)">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem">
+                <span style="font-size:0.8rem; font-weight:600; color:var(--text-primary); letter-spacing:0.08em; text-transform:uppercase">Mempool Timing</span>
+                <div class="range-bar" style="margin-bottom:0">
+                    <button class="range-btn active" id="timing-all">All txs</button>
+                    <button class="range-btn" id="timing-filtered">Priority &ge; $0.01</button>
+                </div>
+            </div>
+            <div class="chart-wrap" style="min-height:220px">
+                <div class="loading" id="timing-loading">Loading&hellip;</div>
+                <canvas id="timing-chart" style="display:none"></canvas>
+            </div>
+            <div style="font-size:0.7rem; color:var(--text-tertiary); margin-top:0.5rem">
+                When public mempool transactions are first seen, relative to slot start (last 50 blocks)
+            </div>
+        </div>
+
+        <footer class="foot" style="margin-top:1.5rem">
             <a href="https://ethpandaops.io/data/xatu/">xatu</a> &middot;
             <a href="https://github.com/nerolation/pyxatu">pyxatu</a> &middot;
             <a href="https://github.com/nerolation/txdelay.xyz">github</a><br>
@@ -352,9 +372,9 @@
         c.update();
     }
 
-    document.querySelectorAll('.range-btn').forEach(btn => {
+    document.querySelectorAll('.range-btn[data-days]').forEach(btn => {
         btn.addEventListener('click', () => {
-            document.querySelector('.range-btn.active')?.classList.remove('active');
+            document.querySelectorAll('.range-btn[data-days]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             setRange(+btn.dataset.days);
         });
@@ -366,16 +386,142 @@
             document.getElementById('loading').style.display = 'none';
             if (!data.length) {
                 document.getElementById('empty').style.display = 'block';
+                loadTimingChart();
                 return;
             }
             allData = data.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
             document.getElementById('chart').style.display = 'block';
             document.querySelector('.chart-wrap').style.height = '400px';
             renderChart(filterData(activeDays));
+            loadTimingChart();
         })
         .catch(() => {
             document.getElementById('loading').textContent = 'Failed to load data.';
+            loadTimingChart();
         });
+
+    // ── Mempool timing histogram ──
+    let timingData = null;
+    let timingChart = null;
+    let histAvgPct = null;  // historical average as percentages [12]
+
+    // Compute historical average from backfill data (already loaded as allData)
+    function computeHistAvg() {
+        const withTiming = allData.filter(d => d.mempool_timing && d.mempool_timing.length === 12);
+        if (!withTiming.length) return null;
+        const sums = new Array(12).fill(0);
+        for (const d of withTiming)
+            for (let i = 0; i < 12; i++) sums[i] += d.mempool_timing[i];
+        const total = sums.reduce((a,b) => a+b, 0);
+        if (!total) return null;
+        return sums.map(v => +(v / total * 100).toFixed(2));
+    }
+
+    function toPct(arr) {
+        const total = arr.reduce((a,b) => a+b, 0);
+        return total ? arr.map(v => +(v / total * 100).toFixed(2)) : arr.map(() => 0);
+    }
+
+    function renderTimingChart(dataset) {
+        const labels = ['0-1s','1-2s','2-3s','3-4s','4-5s','5-6s','6-7s','7-8s','8-9s','9-10s','10-11s','11-12s'];
+        const livePct = toPct(dataset);
+        const canvas = document.getElementById('timing-chart');
+
+        if (timingChart) {
+            timingChart.data.datasets[0].data = livePct;
+            if (timingChart.data.datasets[1]) timingChart.data.datasets[1].data = histAvgPct || [];
+            timingChart.update();
+            return;
+        }
+        canvas.style.display = 'block';
+        canvas.parentElement.style.height = '260px';
+
+        const datasets = [{
+            label: 'Live (last 50 blocks)',
+            data: livePct,
+            backgroundColor: cs('--accent') + '80',
+            borderColor: cs('--accent'),
+            borderWidth: 1, borderRadius: 3,
+            order: 2,
+        }];
+        if (histAvgPct) {
+            datasets.push({
+                label: '30-day average',
+                data: histAvgPct,
+                type: 'line',
+                borderColor: cs('--text-tertiary'),
+                backgroundColor: 'transparent',
+                borderWidth: 2, borderDash: [5, 3],
+                pointRadius: 0, tension: 0.3,
+                order: 1,
+            });
+        }
+
+        timingChart = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: { labels, datasets },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: !!histAvgPct, position: 'top', align: 'end',
+                        labels: { boxWidth: 14, boxHeight: 2, color: cs('--text-tertiary'),
+                            font: { family: "'Inter'", size: 11 } } },
+                    tooltip: {
+                        backgroundColor: cs('--tooltip-bg'), titleColor: cs('--tooltip-text'),
+                        bodyColor: cs('--tooltip-text'),
+                        titleFont: { family: "'Inter'", size: 12 },
+                        bodyFont: { family: "'Inter'", size: 12 },
+                        padding: 8, cornerRadius: 6,
+                        callbacks: {
+                            label: item => `  ${item.dataset.label}: ${item.raw}%`
+                        }
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: cs('--text-tertiary'), font: { family: "'Inter'", size: 11 } },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '% of transactions', color: cs('--text-tertiary'), font: { family: "'Inter'", size: 11 } },
+                        grid: { color: cs('--border-light') },
+                        ticks: { color: cs('--text-tertiary'), font: { family: "'Inter'", size: 11 } },
+                    },
+                },
+            },
+        });
+    }
+
+    document.getElementById('timing-all').addEventListener('click', () => {
+        if (!timingData) return;
+        document.getElementById('timing-filtered').classList.remove('active');
+        document.getElementById('timing-all').classList.add('active');
+        renderTimingChart(timingData.all);
+    });
+    document.getElementById('timing-filtered').addEventListener('click', () => {
+        if (!timingData) return;
+        document.getElementById('timing-all').classList.remove('active');
+        document.getElementById('timing-filtered').classList.add('active');
+        renderTimingChart(timingData.filtered);
+    });
+
+    // Load live timing after history is loaded (so histAvgPct is ready)
+    function loadTimingChart() {
+        histAvgPct = computeHistAvg();
+        fetch('/api/data')
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('timing-loading').style.display = 'none';
+                if (d.mempool_timing) {
+                    timingData = d.mempool_timing;
+                    renderTimingChart(timingData.all);
+                }
+            })
+            .catch(() => {
+                document.getElementById('timing-loading').textContent = 'Failed to load.';
+            });
+    }
     </script>
 </body>
 </html>

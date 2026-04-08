@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from flask import Flask, Response, jsonify, redirect, render_template, request
 
 from compute import (
+    BEACON_GENESIS_TIME,
+    MIN_REVENUE_WEI,
     build_lookups,
     compute_viable_times,
     create_xatu,
@@ -123,6 +125,31 @@ def compute_inclusion_data():
     if stats is None:
         return None
 
+    # Mempool timing histogram (second within slot, 0-11)
+    timing_all = [0] * 12
+    timing_filtered = [0] * 12
+    for _, tx in merged.iterrows():
+        if tx.get("first_seen_time") is None or str(tx.get("first_seen_time")) == "NaT":
+            continue
+        ts = tx["first_seen_time"].timestamp()
+        slot_start = BEACON_GENESIS_TIME + int((ts - BEACON_GENESIS_TIME) // 12) * 12
+        sec = int(ts - slot_start)
+        if not (0 <= sec < 12):
+            continue
+        timing_all[sec] += 1
+        block_num = int(tx["block_number"])
+        inc_slot = block_to_slot.get(block_num)
+        if inc_slot is None:
+            continue
+        bf = basefee_by_slot.get(inc_slot, 0)
+        fee_cap = tx["fee_cap"]
+        priority_cap = tx["priority_cap"]
+        tx_gas = int(tx["gas_limit"]) if "gas_limit" in tx.index else 21_000
+        if fee_cap >= bf:
+            eff_prio = min(priority_cap, fee_cap - bf)
+            if eff_prio * tx_gas >= MIN_REVENUE_WEI:
+                timing_filtered[sec] += 1
+
     return {
         "median_viable_time": stats["median"],
         "mean_viable_time": stats["mean"],
@@ -132,6 +159,7 @@ def compute_inclusion_data():
         "num_txs": num_filtered_txs,
         "latest_basefee_gwei": round(blocks["base_fee_per_gas"].iloc[-1] / 1e9, 2),
         "private_orderflow_pct": round(merged["first_seen_time"].isna().mean() * 100, 1),
+        "mempool_timing": {"all": timing_all, "filtered": timing_filtered},
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
     }
 
