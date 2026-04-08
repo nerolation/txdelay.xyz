@@ -145,7 +145,7 @@
 
         <div class="question">How long does an Ethereum transaction take to be included?</div>
 
-        <div class="hero tip" data-tip="Median time a transaction waits in the mempool while its fee is high enough to be included. Only counts MEV-boost blocks with sufficient builder revenue.">
+        <div class="hero tip" data-tip="Median time a transaction waits in the mempool until the block including it is first seen on the network. Only counts time when fee_cap >= basefee and priority fees >= $0.01.">
             <div class="num {{ '' if data else 'shimmer placeholder' }}" id="main-value">{{ data.median_viable_time if data else '...' }}</div>
             <div class="unit">seconds</div>
             <div class="sub" id="sub-text">
