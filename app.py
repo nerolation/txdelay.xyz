@@ -131,6 +131,7 @@ def compute_inclusion_data():
         "num_blocks": len(block_numbers),
         "num_txs": num_filtered_txs,
         "latest_basefee_gwei": round(blocks["base_fee_per_gas"].iloc[-1] / 1e9, 2),
+        "private_orderflow_pct": round(merged["first_seen_time"].isna().mean() * 100, 1),
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
     }
 
