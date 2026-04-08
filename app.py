@@ -22,11 +22,23 @@ from compute import (
 app = Flask(__name__)
 
 
+CANONICAL_HOST = "txdelay.pics"
+
+
 @app.before_request
-def force_https():
-    """Redirect HTTP to HTTPS on Heroku (behind reverse proxy)."""
-    if request.headers.get("X-Forwarded-Proto") == "http":
-        return redirect(request.url.replace("http://", "https://", 1), code=301)
+def force_canonical():
+    """Redirect HTTP→HTTPS and www→non-www to canonical domain."""
+    host = request.host.split(":")[0]
+    proto = request.headers.get("X-Forwarded-Proto", "https")
+
+    # Redirect www variants to bare domain
+    needs_redirect = proto == "http"
+    if host.startswith("www."):
+        host = host[4:]
+        needs_redirect = True
+
+    if needs_redirect:
+        return redirect(f"https://{host}{request.full_path}", code=301)
 
 
 CACHE_TTL = 60  # seconds
